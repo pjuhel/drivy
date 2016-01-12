@@ -165,35 +165,16 @@ var rentalModifications = [{
   'pickupDate': '2015-12-05'
 }];
 
-
-
-//Exercise 1 : EuroKilometers
-/*
-for (var i = 0; i < rentals.length; i++) {
-  var priceTime;
-  var priceDistance;
-  for (var j = 0; j < cars.length; j++) {
-    if(cars[j].id == rentals[i].carId){ //We identify the selected car with its ID, and get the price per day and per km
-      priceTime = cars[j].pricePerDay;
-      priceDistance = cars[j].pricePerKm;
-    }
-  }
-  var carPickup = new Date(rentals[i].pickupDate); //We create Date variable for computation
-  var carReturn = new Date(rentals[i].returnDate);
-  var time = 1 + (carReturn - carPickup)/86400000; // Computation with date return a result in millisecond, i divide by 86400000 to convert in day time
-  rentals[i].price = rentals[i].distance*priceDistance + time*priceTime; // Set te price of the rent
-}
-*/
-//Exercise 3 : Give me all your money
+//Exercise 4 : The famous deductible
 
 for (var i = 0; i < rentals.length; i++) {
   var carPickup = new Date(rentals[i].pickupDate); //We create Date variable for computation
   var carReturn = new Date(rentals[i].returnDate);
   var time = 1 + (carReturn - carPickup)/86400000; // Computation with date return a result in millisecond, i divide by 86400000 to convert in day time
 
-  var priceTime;
-  var priceDistance;
-  var discount;
+  var priceTime = 0;
+  var priceDistance = 0;
+  var discount = 0;
   if(1<time){ //We set the discount regarding the time the car is rent
     discount = 0.10;
   }
@@ -212,10 +193,10 @@ for (var i = 0; i < rentals.length; i++) {
 
   rentals[i].price = rentals[i].distance*priceDistance + time*priceTime; // Set te price of the rent
 
-  var commission = rentals[i].price*0.30; //30% of the price
-  rentals[i].commission.insurance = commission/2;
+  var carCommission = rentals[i].price*0.30; //30% of the price
+  rentals[i].commission.insurance = carCommission/2;
   rentals[i].commission.assistance = time;
-  rentals[i].commission.drivy = commission - rentals[i].commission.insurance - rentals[i].commission.assistance;
+  rentals[i].commission.drivy = carCommission - rentals[i].commission.insurance - rentals[i].commission.assistance;
 }
 
 
