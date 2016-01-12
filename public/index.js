@@ -168,7 +168,7 @@ var rentalModifications = [{
 
 
 //exercise 1 : EuroKilometers
-
+/*
 for (var i = 0; i < rentals.length; i++) {
   var priceTime;
   var priceDistance;
@@ -183,8 +183,35 @@ for (var i = 0; i < rentals.length; i++) {
   var time = 1 + (carReturn - carPickup)/86400000; // Computation with date return a result in millisecond, i divide by 86400000 to convert in day time
   rentals[i].price = rentals[i].distance*priceDistance + time*priceTime; // Set te price of the rent
 }
+*/
+//exercise 2 : Drive more, pay less
 
+for (var i = 0; i < rentals.length; i++) {
+  var carPickup = new Date(rentals[i].pickupDate); //We create Date variable for computation
+  var carReturn = new Date(rentals[i].returnDate);
+  var time = 1 + (carReturn - carPickup)/86400000; // Computation with date return a result in millisecond, i divide by 86400000 to convert in day time
 
+  var priceTime;
+  var priceDistance;
+  var discount;
+  if(1<time && time <4){ //We set the discount regarding the time the car is rent
+    discount = 0.10;
+  }
+  if(3<time && time <10){
+    discount = 0.30;
+  }
+  if(10<=time){
+    discount = 0.50;
+  }
+  for (var j = 0; j < cars.length; j++) {
+    if(cars[j].id == rentals[i].carId){ //We identify the selected car with its ID, and get the price per day and per km
+      priceTime = cars[j].pricePerDay * (1-discount); //We apply the discount here
+      priceDistance = cars[j].pricePerKm;
+    }
+  }
+
+  rentals[i].price = rentals[i].distance*priceDistance + time*priceTime; // Set te price of the rent
+}
 
 console.log(cars);
 console.log(rentals);
