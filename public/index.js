@@ -165,44 +165,53 @@ var rentalModifications = [{
   'pickupDate': '2015-12-05'
 }];
 
-//Exercise 5 : Pay the actors
+//Exercise 6 : Rental Modification
 
-for (var i = 0; i < rentals.length; i++) {
-  var carPickup = new Date(rentals[i].pickupDate); //We create Date variable for computation
-  var carReturn = new Date(rentals[i].returnDate);
-  var time = 1 + (carReturn - carPickup)/86400000; // Computation with date return a result in millisecond, i divide by 86400000 to convert in day time
+//----------Function----------
 
-  var priceTime = 0;
-  var priceDistance = 0;
-  var discount = 0;
-  if(1<time){ //We set the discount regarding the time the car is rent
-    discount = 0.10;
-  }
-  if(4<time){
-    discount = 0.30;
-  }
-  if(10<time){
-    discount = 0.50;
-  }
-
-  for (var j = 0; j < cars.length; j++) {
-    if(cars[j].id == rentals[i].carId){ //We identify the selected car with its ID, and get the price per day and per km
-      priceTime = cars[j].pricePerDay * (1-discount); //We apply the discount here
-      priceDistance = cars[j].pricePerKm;
-    }
-  }
-
-  rentals[i].price = rentals[i].distance*priceDistance + time*priceTime; // Set te price of the rent
-
-  if(rentals[i].options.deductibleReduction == true){
-    rentals[i].price = rentals[i].price + 4*time;
-  }
-
-  var carCommission = rentals[i].price*0.30; //30% of the price
-  rentals[i].commission.insurance = carCommission/2;
-  rentals[i].commission.assistance = time;
-  rentals[i].commission.drivy = carCommission - rentals[i].commission.insurance - rentals[i].commission.assistance;
+function getRentDuration(date_a, date_b){
+  var date1 = new Date(date_a); //We create Date variable for computation
+  var date2 = new Date(date_b);
+  var time = 1 + (date2 - date1)/86400000; // Computation with date return a result in millisecond, i divide by 86400000 to convert in day time
+  return time;
 }
+
+function computePrice(rentals){ //Compute all price
+  for (var i = 0; i < rentals.length; i++) {
+    var time = getRentDuration(rentals[i].pickupDate, rentals[i].returnDate);
+    var priceTime = 0;
+    var priceDistance = 0;
+    var discount = 0;
+    if(1<time){ //We set the discount regarding the time the car is rent
+      discount = 0.10;
+    }
+    if(4<time){
+      discount = 0.30;
+    }
+    if(10<time){
+      discount = 0.50;
+    }
+
+    for (var j = 0; j < cars.length; j++) {
+      if(cars[j].id == rentals[i].carId){ //We identify the selected car with its ID, and get the price per day and per km
+        priceTime = cars[j].pricePerDay * (1-discount); //We apply the discount here
+        priceDistance = cars[j].pricePerKm;
+      }
+    }
+
+    rentals[i].price = rentals[i].distance*priceDistance + time*priceTime; // Set te price of the rent
+
+    if(rentals[i].options.deductibleReduction == true){
+      rentals[i].price = rentals[i].price + 4*time;
+    }
+
+    var carCommission = rentals[i].price*0.30; //30% of the price
+    rentals[i].commission.insurance = carCommission/2;
+    rentals[i].commission.assistance = time;
+    rentals[i].commission.drivy = carCommission - rentals[i].commission.insurance - rentals[i].commission.assistance;
+  }
+}
+
 
 function getRentalId(id){
   for (var i = 0; i < rentals.length; i++) {
@@ -212,41 +221,58 @@ function getRentalId(id){
   }
 }
 
+function computeDebt(actors){ //Exercise 5, compute every payment for each person
+  for (var i = 0; i < actors.length; i++) {
+    for (var j = 0; j < actors[i].payment.length; j++) {
 
-for (var i = 0; i < actors.length; i++) {
-  for (var j = 0; j < actors[i].payment.length; j++) {
-
-  switch(actors[i].payment[j].who){
-    case "driver":
-      actors[i].payment[j].amount = getRentalId(actors[i].rentalId).price;
-      break;
-    case "owner":
-      var rental = getRentalId(actors[i].rentalId);
-      actors[i].payment[j].amount = rental.price - rental.commission.insurance - rental.commission.drivy - rental.commission.assistance;
-      break;
-    case "insurance":
-      var rental = getRentalId(actors[i].rentalId);
-        actors[i].payment[j].amount = rental.commission.insurance;
-      break;
-    case "assistance":
-      var rental = getRentalId(actors[i].rentalId);
-      actors[i].payment[j].amount = rental.commission.assistance;
-      break;
-    case "drivy":
-      var rental = getRentalId(actors[i].rentalId);
-      var carPickup = new Date(rental.pickupDate); //We create Date variable for computation
-      var carReturn = new Date(rental.returnDate);
-      var time = 1 + (carReturn - carPickup)/86400000; // Computation with date return a result in millisecond, i divide by 86400000 to convert in day time
-      actors[i].payment[j].amount = rental.commission.assistance + 4*time;
-      break;
-    default:
-
+    switch(actors[i].payment[j].who){ // Switch on every " type " of people
+      case "driver":
+        actors[i].payment[j].amount = getRentalId(actors[i].rentalId).price;
+        break;
+      case "owner":
+        var rental = getRentalId(actors[i].rentalId);
+        actors[i].payment[j].amount = rental.price - rental.commission.insurance - rental.commission.drivy - rental.commission.assistance;
+        break;
+      case "insurance":
+        var rental = getRentalId(actors[i].rentalId);
+          actors[i].payment[j].amount = rental.commission.insurance;
+        break;
+      case "assistance":
+        var rental = getRentalId(actors[i].rentalId);
+        actors[i].payment[j].amount = rental.commission.assistance;
+        break;
+      case "drivy":
+        var rental = getRentalId(actors[i].rentalId);
+        var time = getRentDuration(rental.pickupDate, rental.returnDate);
+        actors[i].payment[j].amount = rental.commission.assistance + 4*time;
+        break;
+      default:
+      }
     }
-
   }
-
-
 }
+
+function rentalUpdate(rentalModifications){ //Exercise 6 : Update of rentals with rentalModifications, navigating with the property name in the object to fastly replace it.
+  for (var i = 0; i < rentalModifications.length; i++) {
+    var rental = getRentalId(rentalModifications[i].rentalId);
+    for(var property in rentalModifications[i]){
+      if( property != "rentalId"){ // Exclude rentalId from things that have to be replace
+        rental[property] = rentalModifications[i][property];
+      }
+    }
+  }
+}
+
+//---------- Computation ---------
+computePrice(rentals);
+computeDebt(actors);
+
+rentalUpdate(rentalModifications);
+
+computePrice(rentals); //We compute again after modification
+computeDebt(actors);
+
+
 
 console.log(cars);
 console.log(rentals);
