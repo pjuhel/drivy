@@ -165,7 +165,7 @@ var rentalModifications = [{
   'pickupDate': '2015-12-05'
 }];
 
-//Exercise 4 : The famous deductible
+//Exercise 5 : Pay the actors
 
 for (var i = 0; i < rentals.length; i++) {
   var carPickup = new Date(rentals[i].pickupDate); //We create Date variable for computation
@@ -204,6 +204,49 @@ for (var i = 0; i < rentals.length; i++) {
   rentals[i].commission.drivy = carCommission - rentals[i].commission.insurance - rentals[i].commission.assistance;
 }
 
+function getRentalId(id){
+  for (var i = 0; i < rentals.length; i++) {
+    if(rentals[i].id == id){
+      return rentals[i];
+    }
+  }
+}
+
+
+for (var i = 0; i < actors.length; i++) {
+  for (var j = 0; j < actors[i].payment.length; j++) {
+
+  switch(actors[i].payment[j].who){
+    case "driver":
+      actors[i].payment[j].amount = getRentalId(actors[i].rentalId).price;
+      break;
+    case "owner":
+      var rental = getRentalId(actors[i].rentalId);
+      actors[i].payment[j].amount = rental.price - rental.commission.insurance - rental.commission.drivy - rental.commission.assistance;
+      break;
+    case "insurance":
+      var rental = getRentalId(actors[i].rentalId);
+        actors[i].payment[j].amount = rental.commission.insurance;
+      break;
+    case "assistance":
+      var rental = getRentalId(actors[i].rentalId);
+      actors[i].payment[j].amount = rental.commission.assistance;
+      break;
+    case "drivy":
+      var rental = getRentalId(actors[i].rentalId);
+      var carPickup = new Date(rental.pickupDate); //We create Date variable for computation
+      var carReturn = new Date(rental.returnDate);
+      var time = 1 + (carReturn - carPickup)/86400000; // Computation with date return a result in millisecond, i divide by 86400000 to convert in day time
+      actors[i].payment[j].amount = rental.commission.assistance + 4*time;
+      break;
+    default:
+
+    }
+
+  }
+
+
+}
 
 console.log(cars);
 console.log(rentals);
