@@ -165,6 +165,27 @@ var rentalModifications = [{
   'pickupDate': '2015-12-05'
 }];
 
+
+
+//exercise 1 : EuroKilometers
+
+for (var i = 0; i < rentals.length; i++) {
+  var priceTime;
+  var priceDistance;
+  for (var j = 0; j < cars.length; j++) {
+    if(cars[j].id == rentals[i].carId){ //We identify the selected car with its ID, and get the price per day and per km
+      priceTime = cars[j].pricePerDay;
+      priceDistance = cars[j].pricePerKm;
+    }
+  }
+  var carPickup = new Date(rentals[i].pickupDate); //We create Date variable for computation
+  var carReturn = new Date(rentals[i].returnDate);
+  var time = 1 + (carReturn - carPickup)/86400000; // Computation with date return a result in millisecond, i divide by 86400000 to convert in day time
+  rentals[i].price = rentals[i].distance*priceDistance + time*priceTime; // Set te price of the rent
+}
+
+
+
 console.log(cars);
 console.log(rentals);
 console.log(actors);
