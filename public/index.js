@@ -167,7 +167,7 @@ var rentalModifications = [{
 
 
 
-//exercise 1 : EuroKilometers
+//Exercise 1 : EuroKilometers
 /*
 for (var i = 0; i < rentals.length; i++) {
   var priceTime;
@@ -184,7 +184,7 @@ for (var i = 0; i < rentals.length; i++) {
   rentals[i].price = rentals[i].distance*priceDistance + time*priceTime; // Set te price of the rent
 }
 */
-//exercise 2 : Drive more, pay less
+//Exercise 3 : Give me all your money
 
 for (var i = 0; i < rentals.length; i++) {
   var carPickup = new Date(rentals[i].pickupDate); //We create Date variable for computation
@@ -194,13 +194,13 @@ for (var i = 0; i < rentals.length; i++) {
   var priceTime;
   var priceDistance;
   var discount;
-  if(1<time && time <4){ //We set the discount regarding the time the car is rent
+  if(1<time){ //We set the discount regarding the time the car is rent
     discount = 0.10;
   }
-  if(3<time && time <10){
+  if(4<time){
     discount = 0.30;
   }
-  if(10<=time){
+  if(10<time){
     discount = 0.50;
   }
   for (var j = 0; j < cars.length; j++) {
@@ -211,7 +211,13 @@ for (var i = 0; i < rentals.length; i++) {
   }
 
   rentals[i].price = rentals[i].distance*priceDistance + time*priceTime; // Set te price of the rent
+
+  var commission = rentals[i].price*0.30; //30% of the price
+  rentals[i].commission.insurance = commission/2;
+  rentals[i].commission.assistance = time;
+  rentals[i].commission.drivy = commission - rentals[i].commission.insurance - rentals[i].commission.assistance;
 }
+
 
 console.log(cars);
 console.log(rentals);
