@@ -184,6 +184,7 @@ for (var i = 0; i < rentals.length; i++) {
   if(10<time){
     discount = 0.50;
   }
+
   for (var j = 0; j < cars.length; j++) {
     if(cars[j].id == rentals[i].carId){ //We identify the selected car with its ID, and get the price per day and per km
       priceTime = cars[j].pricePerDay * (1-discount); //We apply the discount here
@@ -192,6 +193,10 @@ for (var i = 0; i < rentals.length; i++) {
   }
 
   rentals[i].price = rentals[i].distance*priceDistance + time*priceTime; // Set te price of the rent
+
+  if(rentals[i].options.deductibleReduction == true){
+    rentals[i].price = rentals[i].price + 4*time;
+  }
 
   var carCommission = rentals[i].price*0.30; //30% of the price
   rentals[i].commission.insurance = carCommission/2;
